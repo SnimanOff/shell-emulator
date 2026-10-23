@@ -1,6 +1,8 @@
 import getpass
 import socket
 
+from src.parser import ParseError, split_line
+
 
 class Shell:
     def __init__(self):
@@ -13,13 +15,17 @@ class Shell:
         return f"{self.user}@{self.host}:~$ "
 
     def execute(self, line: str) -> bool:
-        line = line.strip()
-        if not line:
+        try:
+            args = split_line(line)
+        except ParseError as error:
+            print(f"parse error: {error}")
+            return False
+        if not args:
             return True
-        if line == "exit":
+        if args[0] == "exit":
             self.running = False
             return True
-        print(f"{line}: command not found")
+        print(f"{args[0]}: command not found")
         return False
 
     def run(self) -> None:
