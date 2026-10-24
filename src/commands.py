@@ -2,6 +2,8 @@ from datetime import datetime
 
 from src.vfs import Node
 
+DEFAULT_LINES = 10
+
 
 class ShellError(Exception):
     pass
@@ -48,6 +50,24 @@ def cmd_who(shell, args: list[str]) -> None:
     print(f"{shell.user} pts/0 {shell.started:%Y-%m-%d %H:%M}")
 
 
+def cmd_tail(shell, args: list[str]) -> None:
+    count = DEFAULT_LINES
+    if args[:1] == ["-n"]:
+        text = args[1] if len(args) > 1 else ""
+        if not text.isdigit():
+            raise ShellError(f"invalid number of lines: '{text}'")
+        count = int(text)
+        args = args[2:]
+    if len(args) != 1:
+        raise ShellError("expected one file")
+    node = get_node(shell, args[0])
+    if node.is_dir:
+        raise ShellError(f"{args[0]}: Is a directory")
+    lines = node.data.decode("utf-8", errors="replace").splitlines()
+    for line in lines[max(len(lines) - count, 0):]:
+        print(line)
+
+
 def cmd_exit(shell, args: list[str]) -> None:
     if len(args) > 1:
         raise ShellError("too many arguments")
@@ -62,5 +82,6 @@ COMMANDS = {
     "cd": cmd_cd,
     "uptime": cmd_uptime,
     "who": cmd_who,
+    "tail": cmd_tail,
     "exit": cmd_exit,
 }
