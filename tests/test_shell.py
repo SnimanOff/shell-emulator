@@ -74,3 +74,19 @@ class TestCommands(unittest.TestCase):
         path = "/home/user/docs/notes.txt"
         self.assertEqual(run(self.shell, f"tail -n 2 {path}"), "11\n12")
         self.assertEqual(len(run(self.shell, f"tail {path}").split()), 10)
+
+    def test_mkdir(self):
+        run(self.shell, "mkdir tmp tmp/logs")
+        self.assertTrue(self.shell.vfs.get("/tmp/logs").is_dir)
+        self.assertIn("File exists", run(self.shell, "mkdir /etc"))
+
+    def test_chmod(self):
+        run(self.shell, "chmod 600 /etc/hostname")
+        self.assertEqual(run(self.shell, "ls -l /etc"), "-rw------- hostname")
+        self.assertIn("invalid mode", run(self.shell, "chmod 9 /etc"))
+
+    def test_vfs_load(self):
+        run(self.shell, "mkdir tmp")
+        run(self.shell, "vfs-load vfs/deep.csv")
+        self.assertIsNone(self.shell.vfs.get("/tmp"))
+        self.assertIn("not found", run(self.shell, "vfs-load vfs/nope.csv"))

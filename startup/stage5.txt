@@ -1,0 +1,18 @@
+# stage 5, run with --vfs vfs/deep.csv
+mkdir tmp tmp/logs
+ls tmp
+ls -l /etc
+chmod 600 /etc/hostname
+ls -l /etc
+vfs-load vfs/files.csv
+ls
+vfs-load vfs/deep.csv
+ls
+# errors
+mkdir /etc
+mkdir a/b
+chmod 999 /etc/hostname
+chmod 644 nope
+vfs-load vfs/nope.csv
+vfs-load vfs/bad.csv
+exit

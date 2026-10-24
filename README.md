@@ -14,11 +14,27 @@
 
 ## Команды
 
-- `ls [path]` - содержимое папки
+- `ls [-l] [path]` - содержимое папки, `-l` - с правами
 - `cd [path]` - смена папки, без аргумента - в корень `~`
 - `uptime` - время работы эмулятора
 - `who` - текущий пользователь
 - `tail [-n N] file` - последние N строк файла (по умолчанию 10)
+- `mkdir dir ...` - создание папок
+- `chmod MODE path ...` - смена прав, `MODE` восьмеричный (`755`)
+- `vfs-load path` - загрузка другой VFS
 - `exit [code]` - выход
 
 Аргументы с пробелами пишутся в кавычках: `cd "my dir"`.
+
+## Пример
+
+```
+> python main.py --vfs vfs\deep.csv
+[debug] vfs = vfs\deep.csv, script = None
+sniman@sniman:~$ cd "home/user/my docs"
+sniman@sniman:~/home/user/my docs$ ls -l
+-rw-r--r-- todo.txt
+sniman@sniman:~/home/user/my docs$ cd nope
+cd: nope: No such file or directory
+sniman@sniman:~/home/user/my docs$ exit
+```
