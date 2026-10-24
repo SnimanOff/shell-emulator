@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from src.shell import Shell
+from src.vfs import VFS, VFSError, load_vfs
 
 
 def parse_args() -> argparse.Namespace:
@@ -14,7 +15,14 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     print(f"[debug] vfs = {args.vfs}, script = {args.script}")
-    shell = Shell()
+    vfs = VFS()
+    if args.vfs:
+        try:
+            vfs = load_vfs(args.vfs)
+        except VFSError as error:
+            print(f"vfs error: {error}")
+            sys.exit(1)
+    shell = Shell(vfs)
     if args.script and not shell.run_script(args.script):
         sys.exit(1)
     shell.run()

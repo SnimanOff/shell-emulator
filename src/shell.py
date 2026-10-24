@@ -3,17 +3,20 @@ import socket
 
 from src.commands import COMMANDS, ShellError
 from src.parser import ParseError, split_line, strip_comment
+from src.vfs import VFS
 
 
 class Shell:
-    def __init__(self):
+    def __init__(self, vfs: VFS | None = None):
         self.user = getpass.getuser()
         self.host = socket.gethostname()
+        self.vfs = vfs or VFS()
         self.running = True
         self.exit_code = 0
 
     def prompt(self) -> str:
-        return f"{self.user}@{self.host}:~$ "
+        path = "~" + self.vfs.cwd_path() if self.vfs.cwd else "~"
+        return f"{self.user}@{self.host}:{path}$ "
 
     def execute(self, line: str) -> bool:
         try:
