@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.vfs import Node
 
 
@@ -31,6 +33,21 @@ def cmd_cd(shell, args: list[str]) -> None:
     shell.vfs.cwd = shell.vfs.split(path)
 
 
+def cmd_uptime(shell, args: list[str]) -> None:
+    if args:
+        raise ShellError("too many arguments")
+    now = datetime.now()
+    minutes = int((now - shell.started).total_seconds()) // 60
+    hours, minutes = divmod(minutes, 60)
+    print(f"{now:%H:%M:%S} up {hours}:{minutes:02}, 1 user")
+
+
+def cmd_who(shell, args: list[str]) -> None:
+    if args:
+        raise ShellError("too many arguments")
+    print(f"{shell.user} pts/0 {shell.started:%Y-%m-%d %H:%M}")
+
+
 def cmd_exit(shell, args: list[str]) -> None:
     if len(args) > 1:
         raise ShellError("too many arguments")
@@ -43,5 +60,7 @@ def cmd_exit(shell, args: list[str]) -> None:
 COMMANDS = {
     "ls": cmd_ls,
     "cd": cmd_cd,
+    "uptime": cmd_uptime,
+    "who": cmd_who,
     "exit": cmd_exit,
 }

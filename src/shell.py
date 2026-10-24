@@ -1,5 +1,6 @@
 import getpass
 import socket
+from datetime import datetime
 
 from src.commands import COMMANDS, ShellError
 from src.parser import ParseError, split_line, strip_comment
@@ -11,6 +12,7 @@ class Shell:
         self.user = getpass.getuser()
         self.host = socket.gethostname()
         self.vfs = vfs or VFS()
+        self.started = datetime.now()
         self.running = True
         self.exit_code = 0
 
