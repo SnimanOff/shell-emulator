@@ -1,6 +1,7 @@
 import getpass
 import socket
 
+from src.commands import COMMANDS, ShellError
 from src.parser import ParseError, split_line
 
 
@@ -22,11 +23,16 @@ class Shell:
             return False
         if not args:
             return True
-        if args[0] == "exit":
-            self.running = False
-            return True
-        print(f"{args[0]}: command not found")
-        return False
+        name = args[0]
+        if name not in COMMANDS:
+            print(f"{name}: command not found")
+            return False
+        try:
+            COMMANDS[name](self, args[1:])
+        except ShellError as error:
+            print(f"{name}: {error}")
+            return False
+        return True
 
     def run(self) -> None:
         while self.running:
