@@ -53,3 +53,24 @@ class TestShell(unittest.TestCase):
         run(self.shell, "exit 3")
         self.assertFalse(self.shell.running)
         self.assertEqual(self.shell.exit_code, 3)
+
+
+class TestCommands(unittest.TestCase):
+    def setUp(self):
+        self.shell = Shell(load_vfs("vfs/deep.csv"))
+
+    def test_cd_ls(self):
+        run(self.shell, "cd home/user")
+        self.assertEqual(self.shell.vfs.cwd_path(), "/home/user")
+        self.assertEqual(run(self.shell, "ls"), "docs\nmy docs")
+        run(self.shell, "cd ..")
+        self.assertEqual(self.shell.vfs.cwd_path(), "/home")
+
+    def test_cd_errors(self):
+        self.assertIn("Not a directory", run(self.shell, "cd /etc/hostname"))
+        self.assertIn("No such file", run(self.shell, "cd nope"))
+
+    def test_tail(self):
+        path = "/home/user/docs/notes.txt"
+        self.assertEqual(run(self.shell, f"tail -n 2 {path}"), "11\n12")
+        self.assertEqual(len(run(self.shell, f"tail {path}").split()), 10)

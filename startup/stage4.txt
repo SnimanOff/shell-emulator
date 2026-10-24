@@ -1,0 +1,23 @@
+# stage 4, run with --vfs vfs/deep.csv
+ls
+cd home/user
+ls
+ls docs/work
+cd "my docs"
+ls
+cd ../../..
+cd ~/etc
+cd
+tail /home/user/docs/notes.txt
+tail -n 3 /home/user/docs/notes.txt
+uptime
+who
+# errors
+ls nope
+cd /etc/hostname
+cd nope
+tail /etc
+tail -n x /etc/hostname
+uptime now
+who am i
+exit
