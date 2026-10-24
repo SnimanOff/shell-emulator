@@ -32,3 +32,16 @@ def split_line(line: str) -> list[str]:
     if has_word:
         args.append(word)
     return args
+
+
+def strip_comment(line: str) -> str:
+    quote = None
+    for index, char in enumerate(line):
+        if quote:
+            if char == quote:
+                quote = None
+        elif char in QUOTES:
+            quote = char
+        elif char == "#":
+            return line[:index]
+    return line

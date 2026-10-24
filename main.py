@@ -15,6 +15,8 @@ def main() -> None:
     args = parse_args()
     print(f"[debug] vfs = {args.vfs}, script = {args.script}")
     shell = Shell()
+    if args.script and not shell.run_script(args.script):
+        sys.exit(1)
     shell.run()
     sys.exit(shell.exit_code)
 

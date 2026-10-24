@@ -1,0 +1,8 @@
+# stage 2
+ls
+ls -l "my dir"  # comment after command
+cd '#docs'
+cd a b
+foo
+cd "abc
+exit
