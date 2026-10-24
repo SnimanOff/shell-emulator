@@ -1,8 +1,12 @@
+import re
 from datetime import datetime
 
 from src.vfs import Node
 
 DEFAULT_LINES = 10
+RWX = "rwx"
+MODE_BITS = 9
+OCTAL_MODE = re.compile(r"[0-7]{1,3}")
 
 
 class ShellError(Exception):
@@ -16,14 +20,25 @@ def get_node(shell, path: str) -> Node:
     return node
 
 
+def mode_string(node: Node) -> str:
+    bits = "".join(
+        RWX[index % len(RWX)] if node.mode >> (MODE_BITS - 1 - index) & 1
+        else "-"
+        for index in range(MODE_BITS)
+    )
+    return ("d" if node.is_dir else "-") + bits
+
+
 def cmd_ls(shell, args: list[str]) -> None:
-    if len(args) > 1:
+    detailed = "-l" in args
+    paths = [arg for arg in args if arg != "-l"]
+    if len(paths) > 1:
         raise ShellError("too many arguments")
-    path = args[0] if args else "."
+    path = paths[0] if paths else "."
     node = get_node(shell, path)
-    names = sorted(node.children) if node.is_dir else [path]
-    for name in names:
-        print(name)
+    items = sorted(node.children.items()) if node.is_dir else [(path, node)]
+    for name, item in items:
+        print(f"{mode_string(item)} {name}" if detailed else name)
 
 
 def cmd_cd(shell, args: list[str]) -> None:
@@ -81,6 +96,16 @@ def cmd_mkdir(shell, args: list[str]) -> None:
         parent.children[parts[-1]] = Node(True)
 
 
+def cmd_chmod(shell, args: list[str]) -> None:
+    if not args[1:]:
+        raise ShellError("missing operand")
+    if not OCTAL_MODE.fullmatch(args[0]):
+        raise ShellError(f"invalid mode: '{args[0]}'")
+    nodes = [get_node(shell, path) for path in args[1:]]
+    for node in nodes:
+        node.mode = int(args[0], 8)
+
+
 def cmd_exit(shell, args: list[str]) -> None:
     if len(args) > 1:
         raise ShellError("too many arguments")
@@ -97,5 +122,6 @@ COMMANDS = {
     "who": cmd_who,
     "tail": cmd_tail,
     "mkdir": cmd_mkdir,
+    "chmod": cmd_chmod,
     "exit": cmd_exit,
 }

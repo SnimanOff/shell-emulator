@@ -3,6 +3,8 @@ import binascii
 import csv
 
 HEADER = ["path", "type", "data"]
+DIR_MODE = 0o755
+FILE_MODE = 0o644
 
 
 class VFSError(Exception):
@@ -13,6 +15,7 @@ class Node:
     def __init__(self, is_dir: bool, data: bytes = b""):
         self.is_dir = is_dir
         self.data = data
+        self.mode = DIR_MODE if is_dir else FILE_MODE
         self.children: dict[str, Node] = {}
 
 
