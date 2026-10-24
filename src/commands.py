@@ -68,6 +68,19 @@ def cmd_tail(shell, args: list[str]) -> None:
         print(line)
 
 
+def cmd_mkdir(shell, args: list[str]) -> None:
+    if not args:
+        raise ShellError("missing operand")
+    for path in args:
+        parts = shell.vfs.split(path)
+        if not parts or shell.vfs.find(parts) is not None:
+            raise ShellError(f"{path}: File exists")
+        parent = shell.vfs.find(parts[:-1])
+        if parent is None or not parent.is_dir:
+            raise ShellError(f"{path}: No such file or directory")
+        parent.children[parts[-1]] = Node(True)
+
+
 def cmd_exit(shell, args: list[str]) -> None:
     if len(args) > 1:
         raise ShellError("too many arguments")
@@ -83,5 +96,6 @@ COMMANDS = {
     "uptime": cmd_uptime,
     "who": cmd_who,
     "tail": cmd_tail,
+    "mkdir": cmd_mkdir,
     "exit": cmd_exit,
 }
