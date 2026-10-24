@@ -2,9 +2,13 @@
 
 Эмулятор командной строки UNIX на Python.
 
-Запуск: `run.bat` или `python main.py`.
+Запуск: `run.bat` или `python main.py [--vfs PATH] [--script PATH]`.
+
+- `--vfs` - путь к VFS
+- `--script` - стартовый скрипт: команды по строкам, комментарии через `#`
 
 Тесты: `python -m unittest discover tests`.
+Проверка параметров: `scripts\params.bat`, `scripts\errors.bat`.
 
 ## Команды
 

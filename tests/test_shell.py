@@ -2,7 +2,7 @@ import io
 import unittest
 from contextlib import redirect_stdout
 
-from src.parser import ParseError, split_line
+from src.parser import ParseError, split_line, strip_comment
 from src.shell import Shell
 
 
@@ -21,6 +21,9 @@ class TestParser(unittest.TestCase):
     def test_unclosed_quote(self):
         with self.assertRaises(ParseError):
             split_line('cd "abc')
+
+    def test_comment(self):
+        self.assertEqual(strip_comment("ls '#a' # text"), "ls '#a' ")
 
 
 class TestShell(unittest.TestCase):
