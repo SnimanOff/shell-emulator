@@ -4,11 +4,13 @@
 
 Запуск: `run.bat` или `python main.py [--vfs PATH] [--script PATH]`.
 
-- `--vfs` - путь к VFS
+- `--vfs` - VFS из CSV `path,type,data`: полный путь, `dir` или `file`,
+  содержимое файла в base64; все изменения только в памяти
 - `--script` - стартовый скрипт: команды по строкам, комментарии через `#`
 
 Тесты: `python -m unittest discover tests`.
-Проверка параметров: `scripts\params.bat`, `scripts\errors.bat`.
+Скрипты для проверки: `scripts\params.bat`, `scripts\vfs.bat`,
+`scripts\errors.bat`.
 
 ## Команды
 
