@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from src.vfs import Node
+from src.vfs import Node, VFSError, load_vfs
 
 DEFAULT_LINES = 10
 RWX = "rwx"
@@ -106,6 +106,15 @@ def cmd_chmod(shell, args: list[str]) -> None:
         node.mode = int(args[0], 8)
 
 
+def cmd_vfs_load(shell, args: list[str]) -> None:
+    if len(args) != 1:
+        raise ShellError("expected one path")
+    try:
+        shell.vfs = load_vfs(args[0])
+    except VFSError as error:
+        raise ShellError(str(error)) from None
+
+
 def cmd_exit(shell, args: list[str]) -> None:
     if len(args) > 1:
         raise ShellError("too many arguments")
@@ -123,5 +132,6 @@ COMMANDS = {
     "tail": cmd_tail,
     "mkdir": cmd_mkdir,
     "chmod": cmd_chmod,
+    "vfs-load": cmd_vfs_load,
     "exit": cmd_exit,
 }
