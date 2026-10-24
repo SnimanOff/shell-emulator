@@ -1,0 +1,6 @@
+# stage 3
+ls
+cd /home/user
+cd a b
+foo
+exit
